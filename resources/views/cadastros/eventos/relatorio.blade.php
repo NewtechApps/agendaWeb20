@@ -14,7 +14,7 @@
         <table class="table table-bordered mb-0">
             <thead class="thead-dark rouded">
 
-                <th class="relEvento" style="border-color: white;">Recurso<br>Linha Atuação</th>
+                <th class="relEvento" style="border-color: white; min-width: 170px;">Recurso<br>Linha Atuação</th>
                 @foreach($dates as $date)
 
                     <th style="padding: 5px; border-color: white;">
