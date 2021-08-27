@@ -46,7 +46,7 @@ class Evento extends Model
 
         //log::Debug('------------------');
         $arrDatas = explode(',', trim($request->datas));
-        $idEvento = evento::getId();
+        $idEvento = Evento::getId();
         
         if($request->dataSelecao=='2'){ 
 
@@ -81,7 +81,7 @@ class Evento extends Model
                     if ($dataControle->isSaturday() || $dataControle==$dataFinal || $feriado) {
 
                         $dataFimEvento = ($dataControle->isSaturday() || $feriado) ? $dataControle->subDay() : $dataFinal; 
-                        evento::createEvent( $idEvento, $dataInicial, $dataFimEvento, $request);
+                        Evento::createEvent( $idEvento, $dataInicial, $dataFimEvento, $request);
                         if ($dataControle==$dataFinal){ break; }
 
 
@@ -118,7 +118,7 @@ class Evento extends Model
 
                 $dataInicial = Carbon::parse(str_replace('/', '-', $arrDatas[0]));
                 $dataFinal   = Carbon::parse(str_replace('/', '-', $arrDatas[0]))->endOfDay();
-                evento::createEvent( $idEvento, $dataInicial, $dataFinal, $request );
+                Evento::createEvent( $idEvento, $dataInicial, $dataFinal, $request );
             };
 
         } else {
@@ -128,21 +128,21 @@ class Evento extends Model
                 for ($i = 0; $i < count($arrDatas); $i++) { 
                     $dataInicial = Carbon::parse( str_replace('/', '-', $arrDatas[$i]) );
                     $dataFinal   = Carbon::parse( str_replace('/', '-', $arrDatas[$i]) );
-                    evento::createEvent( $idEvento, $dataInicial, $dataFinal, $request );
+                    Evento::createEvent( $idEvento, $dataInicial, $dataFinal, $request );
                 };
 
             } else {
 
                 $dataInicial = Carbon::parse(str_replace('/', '-', $arrDatas[0]));
                 $dataFinal   = Carbon::parse(str_replace('/', '-', $arrDatas[0]))->endOfDay();
-                evento::createEvent( $idEvento, $dataInicial, $dataFinal, $request );
+                Evento::createEvent( $idEvento, $dataInicial, $dataFinal, $request );
             }
         };
     }
 
     public static function createEvent($idEvento, $dtIni, $dtFim, $request){
 
-        $empresas = new evento();
+        $empresas = new Evento();
         $empresas->id_evento     = $idEvento;
         $empresas->title         = $request->title;
         $empresas->empresa       = $request->empresa;

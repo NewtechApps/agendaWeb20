@@ -9,7 +9,7 @@
 
     <!-- Informações Gerais -->
     <div class="row mb-1"> 
-        <div class="col-md-9 border border-dark rounded pb-0 pr-0 pl-0 mb-1" style='background-color: #f8fafc;'>
+        <div class="col-md-10 border border-dark rounded pb-0 pr-0 pl-0 mb-1" style='background-color: #f8fafc;'>
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="height: 30px">
                 <div class="collapse navbar-collapse"  id="navbarSupportedContent">
                     <ul class="navbar-nav mr-auto">
@@ -53,7 +53,7 @@
             </div>
         </div>
 
-        <div class="col-md-3 border border-dark rounded pb-0 pr-0 pl-0 mb-1" style='background-color: #f8fafc;'>
+        <div class="col-md-2 border border-dark rounded pb-0 pr-0 pl-0 mb-1" style='background-color: #f8fafc;'>
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="height: 30px">
                 <div class="collapse navbar-collapse"  id="navbarSupportedContent">
                     <ul class="navbar-nav mr-auto">
@@ -61,12 +61,32 @@
                     </ul>
                 </div>
             </nav>
+
+            <div style="height: 100px">
+                {{ $chartTotal->container() }}
+                {{ $chartTotal->script() }}
+            </div>
         </div>
     </div>
 
 
+    <div class="col-md-12 border border-dark rounded pb-0 mb-1" style='background-color: #f8fafc;'>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="height: 30px">
+            <div class="collapse navbar-collapse"  id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto font-weight-bold ">
+                <li class="whiteTitle">Alocação por Linha de Atuação</li> 
+                </ul>
+            </div>
+        </nav>
 
+        <div style="height: 400px">
+        {{ $chartAtuacao->container() }}
+        {{ $chartAtuacao->script() }}
+        </div>
+    </div>
+    
     <!-- Carousel -->
+    <!--
     <div class="row mb-0">
 
         <div class="col-md-2 border border-dark rounded pb-0 pr-0 pl-0 mb-0"  style='background-color: #f8fafc;'>
@@ -129,6 +149,7 @@
             </div>
         </div>
     </div>
+    -->
 </div>
 
 

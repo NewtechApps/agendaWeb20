@@ -24,6 +24,9 @@ use App\Events\AgendaExcluida;
 use App\Notifications\AgendaInsert;
 use App\Notifications\AgendaDelete;
 
+use App\Charts\AlocacaoTotal;
+use App\Charts\AlocacaoAtuacao;
+
 class eventosController extends Controller
 {
     /**
@@ -325,13 +328,18 @@ class eventosController extends Controller
             $totalAlocadas += ($integralMultipla+$integralIntervalo+$partTimeMultipla+$partTimeIntervalo);
         }
 
-        $diffDays   = Carbon::parse($dataDe)->diffInWeekdays( Carbon::parse($dataAte) );   
+        $diffDays   = ( Carbon::parse($dataDe)->diffInWeekdays( Carbon::parse($dataAte)) )+1;   
         $totalHoras = $diffDays*8*$usuarios->count()-$feriados;
+
+        $chartTotal   = new AlocacaoTotal( $totalHoras, $totalAlocadas );
+        $chartAtuacao = new AlocacaoAtuacao( $dataDe, $dataAte, $diffDays, $feriados );
 
 
         return view("cadastros.eventos.dashboard")
-            ->with('usuarios', $usuarios)
-            ->with('totalHoras', $totalHoras)
-            ->with('totalAlocadas', $totalAlocadas);
+                ->with('usuarios', $usuarios)
+                ->with('totalHoras', $totalHoras)
+                ->with('totalAlocadas', $totalAlocadas)
+                ->with('chartTotal'  , $chartTotal)
+                ->with('chartAtuacao', $chartAtuacao);
     }
 }
