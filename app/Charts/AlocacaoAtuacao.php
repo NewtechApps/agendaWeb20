@@ -16,9 +16,7 @@ class AlocacaoAtuacao extends Chart
     public function __construct( $dataDe, $dataAte, $diffDays, $feriados )
     {
         parent::__construct();
-        $this->labels(['Alocação']);
 
-        log::Debug($diffDays);
         $disponiveis = DB::table('usuario')
                         ->select('linha_produto.id_linha_produto', 'descricao', DB::raw('count(*) as quantidade') )
                         ->join('linha_produto', 'usuario.id_linha_produto','=', 'linha_produto.id_linha_produto')
@@ -29,14 +27,20 @@ class AlocacaoAtuacao extends Chart
                         ->orderBy('quantidade','desc')->get();
 
         foreach($disponiveis as $disponivel){
+            $disponivel->quantidade = ($disponivel->quantidade*$diffDays*8)-$feriados;
+        }
 
-            $this->dataset( $disponivel->descricao, 'bar', [($disponivel->quantidade*$diffDays*8)-$feriados])
-                ->backgroundcolor(["#002b80"])
-                ->options([
-                    'borderWidth' => 1,
-                    'borderColor' => 'black',
-            ]);
+        $capacidade = $disponiveis->pluck('quantidade','descricao');
 
+        $this->labels( $capacidade->keys() );
+        $this->dataset( 'Disponível', 'bar', $capacidade->values() )
+            ->backgroundcolor(["#001a4d"])
+            ->options([
+                'borderWidth' => 1,
+                'borderColor' => 'black',
+        ]);
+        
+            /*
             $integralMultipla = DB::table('events')
                                 ->join('usuario', 'events.id_usuario', '=', 'usuario.id_usuario')
                                 ->whereBetween('start', [ $dataDe, $dataAte ])
@@ -55,6 +59,6 @@ class AlocacaoAtuacao extends Chart
                     'borderColor' => 'black',
                     'legend' => ['position' => 'left'],
             ]);
-        }
+        */
     }
 }

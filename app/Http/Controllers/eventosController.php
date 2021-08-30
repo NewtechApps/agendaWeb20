@@ -272,8 +272,8 @@ class eventosController extends Controller
     {
  
         $totalAlocadas = 0;
-        $dataDe  = $request->dataInicial ?? Carbon::now()->startOfWeek();
-        $dataAte = $request->dataFinal   ?? Carbon::now()->endOfMonth()->endOfWeek(Carbon::FRIDAY);
+        $dataDe  = $request->dataInicial ?? Carbon::now()->nextWeekday();
+        $dataAte = $request->dataFinal   ?? Carbon::now()->nextWeekday()->addDays(4);
         
         $feriados = DB::table('feriados')
                     ->whereBetween('data', [ $dataDe, $dataAte ])->count()*8;
@@ -286,54 +286,41 @@ class eventosController extends Controller
 
         foreach($usuarios as $usuario){
 
-            $integralMultipla = DB::table('events')
+            $horasMultipla = DB::table('events')
+                                ->select('id_usuario', 'tipo_periodo', 
+                                    DB::Raw('(CASE WHEN tipo_periodo=0 THEN count(*)*8 ELSE count(*)*4 END) as totalHoras') )
                                 ->whereBetween('start', [ $dataDe, $dataAte ])
-                                ->where('id_usuario'  , '=', 127)
+                                ->where('id_usuario'  , '=', $usuario->id_usuario)
                                 ->where('status'      , '=', '1')
                                 ->where('tipo_data'   , '=', '1')
-                                ->where('tipo_periodo', '=', '0')
                                 ->whereNull('deleted_at')
-                                ->count()*8;
-
-            $partTimeMultipla  = DB::table('events')
-                                ->whereBetween('start', [ $dataDe, $dataAte ])
-                                ->where('id_usuario'  , '=', 127)
-                                ->where('status'      , '=', '1')
-                                ->where('tipo_data'   , '=', '1')
-                                ->whereIn('tipo_periodo', ['1','2'])
-                                ->whereNull('deleted_at')
-                                ->count()*4;
-
-            $eventosIntervalo  = DB::table('events')
+                                ->groupBy('id_usuario', 'tipo_periodo')
+                                ->get();
+            
+            $eventosIntervalo = DB::table('events')
                                 ->where('start', '>=', $dataDe)
                                 ->where('end',   '<=', $dataAte)
-                                ->where('id_usuario'  , '=', 127)
-                                ->where('status'      , '=', '1')
-                                ->where('tipo_data'   , '=', '2')
+                                ->where('id_usuario' , '=', $usuario->id_usuario)
+                                ->where('status'     , '=', '1')
+                                ->where('tipo_data'  , '=', '2')
                                 ->whereNull('deleted_at')
                                 ->get();
             
-            $integralIntervalo = 0;
-            $partTimeIntervalo = 0;
-            
+            $horasIntervalo = 0;
             foreach($eventosIntervalo as $intervalo){
                 
-                if($intervalo->tipo_periodo=='0'){
-                    $integralIntervalo += (Carbon::parse( $intervalo->start )->diffInWeekdays( Carbon::parse($intervalo->end) ))*8;
-                } else {
-                    $partTimeIntervalo += (Carbon::parse( $intervalo->start )->diffInWeekdays( Carbon::parse($intervalo->end) ))*4;
-                }
+                $eventDays = Carbon::parse( $intervalo->start )->diffInWeekdays( Carbon::parse($intervalo->end)->endOfDay() );
+                $horasIntervalo += ( $eventDays * ($intervalo->tipo_periodo=='0' ? 8 : 4 ));
             }
 
-            $totalAlocadas += ($integralMultipla+$integralIntervalo+$partTimeMultipla+$partTimeIntervalo);
+            $totalAlocadas += ($horasMultipla->sum('totalHoras') + $horasIntervalo);
         }
 
-        $diffDays   = ( Carbon::parse($dataDe)->diffInWeekdays( Carbon::parse($dataAte)) )+1;   
-        $totalHoras = $diffDays*8*$usuarios->count()-$feriados;
+        $diffDays   = Carbon::parse($dataDe)->diffInWeekdays( Carbon::parse($dataAte)->endOfDay()); 
+        $totalHoras = $diffDays*8*($usuarios->count()-$feriados);
 
         $chartTotal   = new AlocacaoTotal( $totalHoras, $totalAlocadas );
         $chartAtuacao = new AlocacaoAtuacao( $dataDe, $dataAte, $diffDays, $feriados );
-
 
         return view("cadastros.eventos.dashboard")
                 ->with('usuarios', $usuarios)

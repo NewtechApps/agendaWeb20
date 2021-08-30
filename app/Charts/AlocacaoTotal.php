@@ -19,8 +19,15 @@ class AlocacaoTotal extends Chart
         $percAlocadas    = $totalAlocadas/$totalHoras*100;
         $percDisponiveis = 100-$percAlocadas; 
 
-       // $this->labels(['Alocadas', 'Disponíveis']);
-       // $this->displayLegend( false );
+      //  $this->labels(['Alocadas', 'Disponíveis']);
+        $this->options([
+            'scales' => [
+                'yAxes' => [ 'display' => false ],
+                'xAxes' => [ 'display' => false ],
+            ],
+        ]); 
+
+        
         $this->dataset('Alocação', 'doughnut', [ $percAlocadas, $percDisponiveis ])
             ->backgroundcolor(["#002b80", "#ff8000"])
             ->options([
