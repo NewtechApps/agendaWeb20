@@ -16,16 +16,9 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
-
-Route::get('/', function () {
-    return view('auth.login');
-});
-Route::get('/update-user', function() {
-    return view('auth.update');
-});
-Route::get('/mailMessage', function () {
-    return view('auth.mailMessage');
-});
+Route::get('/', function () { return view('auth.login'); });
+Route::get('/update-user', function() { return view('auth.update'); });
+Route::get('/mailMessage', function (){ return view('auth.mailMessage'); });
 
 
 
@@ -78,19 +71,18 @@ Route::group(['prefix' => 'feriados'], function () {
 
 // Rotas de Cadastros - Agendas
 Route::group(['prefix' => 'eventos'], function () {
-    Route::get('/'      , 'eventosController@index');
-    Route::post('create', 'eventosController@create');
-    Route::post('delete', 'eventosController@delete');
-    Route::delete('deleteAll', 'eventosController@deleteAll');
-
-    Route::get('dashboard', 'eventosController@dashboard');
-    Route::get('relatorio', 'eventosController@relatorio');
-    Route::get('consulta' , 'eventosController@consulta')->name('loadEvents');
+    Route::get('/'         , 'EventosController@index');
+    Route::post('create'   , 'EventosController@create');
+    Route::post('delete'   , 'EventosController@delete');
+    Route::post('deleteAll', 'EventosController@deleteAll');
+    Route::get('relatorio' , 'EventosController@relatorio');
+    Route::get('consulta'  , 'EventosController@consulta')->name('loadEvents');
 
     Route::get('carregaMultiplasDatas/{id}', function($id){
-    return response()->json( DB::table('events')->where('id_evento', '=', $id)->get() );  });
+    return response()->json( DB::table('events')->where('id_evento', '=', $id)->whereNull('deleted_at')->get() );  });
+
     Route::get('carregaIntervaloDatas/{id}', function($id){
-    return response()->json( DB::table('events')->where('id', '=', $id)->get() );  });
+    return response()->json( DB::table('events')->where('id', '=', $id)->whereNull('deleted_at')->get() );  });
 });
 
 

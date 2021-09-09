@@ -27,7 +27,7 @@ use App\Notifications\AgendaDelete;
 use App\Charts\AlocacaoTotal;
 use App\Charts\AlocacaoAtuacao;
 
-class eventosController extends Controller
+class EventosController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -56,23 +56,39 @@ class eventosController extends Controller
         } else {  
 
             try {
-                
-                if($request->dataSelecao=='2'){
-                Evento::where('id', '=', $request->id_evento)->delete();
+
+                // Caso seja alteração de Registro.
+                if($request->id_geral){
+                    
+                    // Caso evento original seja Múltiplas datas.
+                    $evento = Evento::where('id_evento', '=', $request->id_geral)->first();
+                    if($evento->tipo_data=='1'){
+
+                        Evento::where('id_evento', '=', $request->id_geral)->delete();
+                        Evento::gerarAgendas($request);
+                    
+                    // Caso evento original seja de Intervalo.
+                    } else {
+                        Evento::where('id', '=', $request->id_evento)->delete();
+                        Evento::gerarAgendas($request);
+                    }
+
+                // Caso seja inclusão de Novas Agendas.
                 } else {
-                Evento::where('id_evento', '=', $request->id_geral)->delete();
+                    Evento::gerarAgendas($request);
                 }
 
-                Evento::gerarAgendas($request);
+
+
+                // Envio de notificação por e-mail.
                 if($request->status=="1"){
                     $user = Usuario::find($request->id_usuario);
                     if($user->notificacao_agenda=="S"){
         
                         $empresa = DB::table('usuario_empresa')
-                                    ->where([
-                                        ['id_usuario', '=', $request->id_usuario],
-                                        ['id_empresa', '=', $request->empresa],
-                                    ])->first();
+                                    ->where('id_usuario', '=', $request->id_usuario)
+                                    ->where('id_empresa', '=', $request->empresa)
+                                    ->first();
         
                         if($empresa->status==0){
                             $user->email = $empresa->email;
@@ -80,8 +96,6 @@ class eventosController extends Controller
                         }
                     }
                 }
-        
-                //event(new AgendaCriada( $request->all() ));
                 return response()->json(['code'=>'200']);
 
             } catch (\Exception $e) {
@@ -197,25 +211,9 @@ class eventosController extends Controller
         } else {
 
             $usuario = Auth::user()->id_usuario;
-            $events = DB::table('events')
-                        ->select(
-                            DB::raw("CONCAT(usuario.nome,' - ',events.title) AS title"),
-                            DB::raw("CONCAT('#',trabalho.cor) AS backgroundColor"),
-                            DB::raw("CONCAT('#',trabalho.cor) AS borderColor"),
-                            
-                            'empresa', 'tipo_trabalho', 'start', 'end', 'tipo_data', 
-                            'id_evento AS id', 
-                            'events.status AS status',
-                            'events.title AS descricao', 
-                            'start AS datainicial', 
-                            'usuario.id_usuario AS usuario',
-                            'trabalho.descricao AS descTrabalho',
-                            'usuario_empresa.status AS statusEmpresa'
-                        )
-                        ->join('usuario' , 'usuario.id_usuario',   '=', 'events.id_usuario')
-                        ->join('trabalho', 'trabalho.id_trabalho', '=', 'events.tipo_trabalho')
+            $events  = DB::table('consultaagendas')
                         ->join('usuario_empresa', function($join) use ($usuario) {
-                            $join->on('usuario_empresa.id_empresa', '=', 'events.empresa')
+                            $join->on('usuario_empresa.id_empresa', '=', 'empresa')
                                 ->where([
                                     ['usuario_empresa.status',     '=', '0'],
                                     ['usuario_empresa.id_usuario', '=', $usuario],
@@ -223,7 +221,7 @@ class eventosController extends Controller
                             }
                         )
         
-                        ->where('events.id_usuario', '=', Auth::user()->id_usuario)
+                        ->where('usuario', '=', Auth::user()->id_usuario)
                         ->whereBetween('start', [ $request->start, $request->end ])
                         ->get();
 
@@ -259,13 +257,24 @@ class eventosController extends Controller
                 ->get();
 
 
-        $events =  DB::table('relatorioAgendas')
+        $usuarios = DB::table('relatorioAgendas')
+                    ->select('LINHA', 'USUARIO', 'NOME')
+                    ->whereBetween('DATACAL', [ Carbon::parse($request->data_rel_ini), Carbon::parse($request->data_rel_fin) ])
+                    ->where(function ($query) use ($usuario) { if ($usuario) { $query->whereIn('USUARIO', $usuario  ); } })
+                    ->groupBy('LINHA')->groupBy('USUARIO')->groupBy('NOME')
+                    ->orderBy('LINHA')->orderBy('NOME')
+                    ->get();
+    
+        $eventos =  DB::table('relatorioAgendas')
                     ->whereBetween('DATACAL', [ Carbon::parse($request->data_rel_ini), Carbon::parse($request->data_rel_fin) ])
                     ->where(function ($query) use ($usuario) { if ($usuario) { $query->whereIn('USUARIO', $usuario  ); } })
                     ->orderBy('LINHA')->orderBy('NOME')->orderBy('DATACAL')
                     ->get();
                 
-        return view("cadastros.eventos.relatorio")->with('dates', $dates)->with('events', $events);
+        return view("cadastros.eventos.relatorio")
+               ->with('dates'   , $dates)
+               ->with('eventos' , $eventos)
+               ->with('usuarios', $usuarios);
     }
 
     public function dashboard(Request $request)

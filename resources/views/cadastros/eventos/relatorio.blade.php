@@ -9,19 +9,18 @@
     </div>
 </nav>
 
-<div id="main" class="container-fluid pt-2 pb-1">
+<div id="main" class="container-fluid pt-1 pb-1">
     <div id="list" class="row border border-light rounded" style='background: white; width:100%;'>
         <table class="table table-bordered mb-0">
             <thead class="thead-dark rouded">
 
-                <th class="relEvento" style="border-color: white;">Recurso<br>Linha Atuação</th>
+                <th class="relEvento" style="border-color: white; min-width: 170px;">Recurso<br>Linha Atuação</th>
                 @foreach($dates as $date)
-
 
                     <th style="padding: 5px; border-color: white;">
                     @php ($weekend = Carbon\Carbon::parse($date->id_data) )
                     @if ( $weekend->isWeekend() || $date->descricao) 
-                        {{ ($date->descricao) ? ('*** '.$date->descricao.' ***') : '' }}<br>
+                        {{ ($date->descricao) ? ('*** '.$date->descricao) : '' }}<br>
                         {{Carbon\Carbon::parse($date->id_data)->isoFormat('dddd')}},<br>
                         {{Carbon\Carbon::parse($date->id_data)->isoFormat('DD/MM/Y')}}<br>
                     @else 
@@ -29,55 +28,37 @@
                         <br>{{Carbon\Carbon::parse($date->id_data)->isoFormat('DD/MM/Y')}}
                     @endif
                     </th>
+
                 @endforeach
             </thead>
 
             <tbody>     
 
+                @foreach($usuarios as $usuario)
+                <tr>
 
-                @php ($usuario = '')
-                @foreach($events as $evento)
+                    <td style="color: black; background-color: #e4e4e7; border-color: white;">{{ $usuario->NOME }}
+                    <br>{{ $usuario->LINHA }}</td>
 
-                    @if($usuario<>$evento->USUARIO)
-                        <tr>
-                        <td style="color: black; background-color: #e4e4e7; border-color: white;">{{ $evento->NOME }}
-                        <br> {{ $evento->LINHA }}</td>
-                       
-
-                        @php ($dataLoop = '')
-                        @php ($filtered = $events->where('USUARIO', $evento->USUARIO))
-
-
-                        @foreach($filtered as $user)
+                    @foreach($dates as $date)
+                    
+                        @php ( $weekend = Carbon\Carbon::parse($date->id_data) )
+                        @if  ( $weekend->isWeekend() || $date->descricao ) 
+                        <td style="padding: 5px; border-color: white; background-color: #e4e4e7;">
+                        @else 
+                        <td style="padding: 5px; border-color: white; background-color: #d1eaf1;">
+                        @endif
     
-                            @if($dataLoop<>$user->DATACAL)
-                                @php ($weekend = Carbon\Carbon::parse($user->DATACAL) )
-                                @if ( $weekend->isWeekend() || $user->FERIADO ) 
-                                <td style="padding: 5px; border-color: white; background-color: #e4e4e7;">
-                                @else 
-                                <td style="padding: 5px; border-color: white; background-color: #d1eaf1;">
-                                @endif
-
-
-                                @php ($dataCal = $filtered->where('DATACAL', $user->DATACAL))
-                                @foreach($dataCal as $dataEvento)
-                            
-                                    @if($dataEvento->DESCRICAO)
-                                    <div class="relEvento border border-dark rounded" style="background-color: {{ $dataEvento->COR }}">{{ $dataEvento->DESCRICAO }}</div>
-                                    @endif
-                            
-                                @endforeach
-                                </td>
+                        @php ($agendas = $eventos->where('USUARIO', $usuario->USUARIO)->where('DATACAL', '=', $date->id_data) )
+                        @foreach($agendas as $agenda)
+                            @if($agenda->DESCRICAO)
+                            <div class="relEvento border border-dark rounded" style="background-color: {{ $agenda->COR }}">{{ $agenda->DESCRICAO }}</div>
                             @endif
-                            @php ($dataLoop = $user->DATACAL)
-
-
                         @endforeach
-                        </tr>
-                    @endif
- 
+                        </td>
 
-                    @php ($usuario = $evento->USUARIO)
+                    @endforeach
+                </tr>
                 @endforeach
 
 

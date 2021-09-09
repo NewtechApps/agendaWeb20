@@ -1,6 +1,5 @@
 {!! Form::open( array('id'=>'frmDeleteTodasAgendas', 'url'=>'eventos/deleteAll') ) !!}
 {{ csrf_field() }}
-{{ method_field('DELETE') }}
 
 <div class="modal fade" id="delAll">
     <div class="modal-dialog modal-dialog-centered">

@@ -24,7 +24,7 @@
         @if(Auth::user()->id_perfil=='1')
             <div id="filtros" class="col-md-2 border border-dark rounded pt-3 pb-1" style='background: white'>
                 
-                {!! Form::open(['method'=>'get', 'id'=>'btnRelat', 'target'=>'_blank', 'action'=>'eventosController@relatorio']) !!}
+                {!! Form::open(['method'=>'get', 'id'=>'btnRelat', 'target'=>'_blank', 'action'=>'EventosController@relatorio']) !!}
                 <div class="row">
                     <h5 class="fc-toolbar-title">Filtros</h5>
                 </div>          
@@ -374,7 +374,6 @@
                     $('#datepicker').multiDatesPicker('resetDates', 'picked');
 
                     $('#modalAgenda #modal-title').text("Alterar Evento");
-                    $('#modalAgenda #delete-btn').css('display','inline-block');
                     $('#modalAgenda #del-all-btn').css('display','inline-block');
 
                     $('#modalAgenda #id_evento').val( info.event.id );
@@ -384,8 +383,10 @@
                     $('#modalAgenda #status').val( info.event.extendedProps.status );
                     $('#modalAgenda #empresa').val( info.event.extendedProps.empresa );
                     $('#modalAgenda #id_usuario').val( info.event.extendedProps.usuario );
+                    $('#modalAgenda #tipo_periodo').val( info.event.extendedProps.tipo_periodo);
                     $('#modalAgenda #tipo_trabalho').val( info.event.extendedProps.tipo_trabalho );
 
+                    $('#modalAgenda #delete-btn').css('display', info.event.extendedProps.tipo_data=='2' ? 'inline-block':'none');
                     $radio = (info.event.extendedProps.tipo_data=='1') ? '#modalAgenda #radio2' : '#modalAgenda #radio1';
                     $url   = (info.event.extendedProps.tipo_data=='2') ? '{{ env("APP_URL") }}/eventos/carregaIntervaloDatas/'+info.event.id :
                                                                          '{{ env("APP_URL") }}/eventos/carregaMultiplasDatas/'+info.event.extendedProps.id_geral;
@@ -455,9 +456,11 @@
 
                 $(info.el).tooltip({
                     title: info.event.title+
+                    '\n\n Período: '+info.event.extendedProps.periodo+
                     '\n Data Inicial: '+dataInicial+
                     '\n Data Final: '+dataFinal+
-                    '\n Tipo: '+info.event.extendedProps.descTrabalho,
+                    '\n\n Tipo: '+info.event.extendedProps.descTrabalho+
+                    '\n Gestor: '+info.event.extendedProps.nomeGestor,
 
                     placement: 'top',
                     trigger: 'hover',
@@ -554,6 +557,7 @@
             $('#modalAgenda #del-all-btn').css('display','none');
 
             selecaoDatas(2);
+            $('#modalAgenda #id_geral').val('');
             $('#modalAgenda #id_evento').val('');
             $('#modalAgenda').modal('show');
 
