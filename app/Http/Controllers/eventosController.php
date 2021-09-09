@@ -272,11 +272,11 @@ class eventosController extends Controller
     {
  
         $totalAlocadas = 0;
-        $dataDe  = $request->dataInicial ?? Carbon::now()->nextWeekday();
-        $dataAte = $request->dataFinal   ?? Carbon::now()->nextWeekday()->addDays(4);
+        $dataDe  = $request->dataInicial ?? Carbon::now()->startOfWeek();
+        $dataAte = $request->dataFinal   ?? Carbon::now()->endOfWeek(Carbon::FRIDAY);
         
         $feriados = DB::table('feriados')
-                    ->whereBetween('data', [ $dataDe, $dataAte ])->count()*8;
+                    ->whereBetween('data', [ $dataDe, $dataAte ])->count();
 
         $usuarios = DB::table('usuario')
                     ->where('status'    , '=' , '0')
@@ -317,10 +317,11 @@ class eventosController extends Controller
         }
 
         $diffDays   = Carbon::parse($dataDe)->diffInWeekdays( Carbon::parse($dataAte)->endOfDay()); 
-        $totalHoras = $diffDays*8*($usuarios->count()-$feriados);
+        $diffDays   = $diffDays-$feriados;
+        $totalHoras = $diffDays*8*$usuarios->count();
 
         $chartTotal   = new AlocacaoTotal( $totalHoras, $totalAlocadas );
-        $chartAtuacao = new AlocacaoAtuacao( $dataDe, $dataAte, $diffDays, $feriados );
+        $chartAtuacao = new AlocacaoAtuacao( $dataDe, $dataAte, $diffDays );
 
         return view("cadastros.eventos.dashboard")
                 ->with('usuarios', $usuarios)

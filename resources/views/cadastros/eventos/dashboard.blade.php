@@ -23,14 +23,14 @@
 
                     <div class="col-md-3">
                     {!! Form::label("dataInicial","Data Inicial", ["class"=>"col-form-label pl-0"]) !!}
-                    {!! Form::date("dataInicial", request('dataInicial') ?? now()->nextWeekday() ,["class"=>"form-control", "autofocus", "onkeydown"=>"setFocus(event,'#dataFinal');" ]) !!}
+                    {!! Form::date("dataInicial", request('dataInicial') ?? now()->startOfWeek() ,["class"=>"form-control", "autofocus", "onkeydown"=>"setFocus(event,'#dataFinal');" ]) !!}
                     </div>
 
                     <div class="col-md-3">
 
                         {!! Form::label("dataFinal","Data Final", ["class"=>"col-form-label pl-0"]) !!}
                         <div class="input-group">
-                            {!! Form::date("dataFinal", request('dataFinal') ?? now()->nextWeekday()->addDays(4) ,["class"=>"form-control", "onkeydown"=>"javascript:if(event.keyCode==13){ $('#search').click(); };" ]) !!}
+                            {!! Form::date("dataFinal", request('dataFinal') ?? now()->endOfWeek(Carbon\Carbon::FRIDAY), ["class"=>"form-control", "onkeydown"=>"javascript:if(event.keyCode==13){ $('#search').click(); };" ]) !!}
                             <div class="input-group-append">
                             <button type="submit" class="btn btn-sm btn-light" title="Pesquisar" id="search"><i class="fas fa-search"></i></button>
                             </div>

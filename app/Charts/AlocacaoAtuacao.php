@@ -13,9 +13,29 @@ class AlocacaoAtuacao extends Chart
      *
      * @return void
      */
-    public function __construct( $dataDe, $dataAte, $diffDays, $feriados )
+    public function __construct( $dataDe, $dataAte, $diffDays )
     {
         parent::__construct();
+
+        $horasMultipla = DB::table('events')
+                        ->select('linha_produto.id_linha_produto', 'descricao', DB::Raw('count(*) as quantidade') )
+                        ->join('usuario', 'events.id_usuario', '=', 'usuario.id_usuario')
+                        ->join('linha_produto', 'usuario.id_linha_produto','=', 'linha_produto.id_linha_produto')
+                        ->whereBetween('start', [ $dataDe, $dataAte ])
+                        ->where('events.status', '=', '1')
+                        ->where('usuario.status', '=' , '0')
+                        ->where('usuario.id_perfil' , '<>', '1')
+                        ->where('usuario.id_usuario', '<>', '1')
+                        ->where('tipo_periodo', '=', '0')
+                        ->where('tipo_data', '=', '1')
+                        ->whereNull('deleted_at')
+                        ->groupBy('linha_produto.id_linha_produto')
+                        ->orderBy('quantidade', 'desc')->get();
+        log::Debug($horasMultipla);
+        foreach($horasMultipla as $multiplas){
+            $multiplas->quantidade = ($multiplas->quantidade*8);
+        }
+
 
         $disponiveis = DB::table('usuario')
                         ->select('linha_produto.id_linha_produto', 'descricao', DB::raw('count(*) as quantidade') )
@@ -27,38 +47,25 @@ class AlocacaoAtuacao extends Chart
                         ->orderBy('quantidade','desc')->get();
 
         foreach($disponiveis as $disponivel){
-            $disponivel->quantidade = ($disponivel->quantidade*$diffDays*8)-$feriados;
+            $disponivel->quantidade = ($disponivel->quantidade*$diffDays*8);
         }
 
         $capacidade = $disponiveis->pluck('quantidade','descricao');
-
+        $alocadas   = $horasMultipla->pluck('quantidade','descricao');
         $this->labels( $capacidade->keys() );
+
         $this->dataset( 'Disponível', 'bar', $capacidade->values() )
             ->backgroundcolor(["#001a4d"])
             ->options([
                 'borderWidth' => 1,
                 'borderColor' => 'black',
-        ]);
-        
-            /*
-            $integralMultipla = DB::table('events')
-                                ->join('usuario', 'events.id_usuario', '=', 'usuario.id_usuario')
-                                ->whereBetween('start', [ $dataDe, $dataAte ])
-                                //->where('id_usuario'  , '=', 127)
-                                ->where('usuario.id_linha_produto', '=', $disponivel->id_linha_produto )
-                                ->where('events.status', '=', '1')
-                                ->where('tipo_data'    , '=', '1')
-                                ->where('tipo_periodo' , '=', '0')
-                                ->whereNull('deleted_at')
-                                ->count()*8;
-
-            $this->dataset( $disponivel->descricao, 'bar', [$integralMultipla])
-                ->backgroundcolor(["#ff8000"])
-                ->options([
-                    'borderWidth' => 1,
-                    'borderColor' => 'black',
-                    'legend' => ['position' => 'left'],
             ]);
-        */
+
+        $this->dataset( 'Alocadas', 'bar', $alocadas->values() )
+            ->backgroundcolor(["#ff8000"])
+            ->options([
+                'borderWidth' => 1,
+                'borderColor' => 'black',
+            ]);
     }
 }
