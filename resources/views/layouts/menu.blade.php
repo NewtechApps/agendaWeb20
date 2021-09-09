@@ -18,8 +18,8 @@
 
             @foreach($rotinas as $rotina)
 
-               @switch($rotina->id_rotina)
-                  @case(1)
+                @switch($rotina->id_rotina)
+                @case(1)
                      <li class="nav-item active dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" 
                            role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ $rotina->nome }}</a>
@@ -32,7 +32,7 @@
                         </ul>
                      </li>
                      @break
-                  @case(2)
+                @case(2)
                      <li class="nav-item active dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" 
                            role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ $rotina->nome }}</a>
@@ -42,12 +42,17 @@
                         </ul>
                      </li>
                      @break
-                  @case(3)
+                @case(3)
                      <li class="nav-item active">
                         <a class="nav-link" href="{{ action('EventosController@index') }}">{{ $rotina->nome }}</a>
                      </li>
                      @break
-               @endswitch
+                @case(5)
+                    <li class="nav-item active">
+                        <a class="nav-link" target="blank" href="{{ action('eventosController@dashboard') }}">{{ $rotina->nome }}</a>
+                    </li>
+                    @break
+                @endswitch
 
             @endforeach
 

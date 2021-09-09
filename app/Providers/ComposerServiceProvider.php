@@ -31,6 +31,7 @@ class ComposerServiceProvider extends ServiceProvider
                           'cadastros.tipoServico.index',
                           'cadastros.tipoAgenda.index',
                           'cadastros.eventos.index',
+                          'cadastros.eventos.dashboard',
                           'cadastros.feriados.index',
                           'auth.update',
                           'home'],
@@ -45,8 +46,9 @@ class ComposerServiceProvider extends ServiceProvider
         view()->composer(['cadastros.usuario.index'],
                           'App\Http\Views\GeneralViewComposer@tiposServico');
 
-        view()->composer(['cadastros.eventos.index'],
-                        'App\Http\Views\GeneralViewComposer@tiposAgenda');
+        view()->composer(['cadastros.eventos.index',
+                          'cadastros.eventos.dashboard'],
+                          'App\Http\Views\GeneralViewComposer@tiposAgenda');
 
         view()->composer(['cadastros.eventos.index'],
                           'App\Http\Views\GeneralViewComposer@usuarios');

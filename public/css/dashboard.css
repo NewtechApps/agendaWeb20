@@ -1,0 +1,63 @@
+/* --------------------- */
+/*       Body CSS        */
+/* --------------------- */  
+html, body {
+    padding-bottom: 0.5rem;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: bottom;
+    background-attachment: fixed;
+    font-size: 0.95rem;
+}
+
+.navbar-expand-lg,
+.navbar-dark,
+.bg-dark {
+    font-family: "Nunito";
+    font-weight: bold;
+    padding-top   : 0.1rem;
+    padding-bottom: 0.15rem;
+    height: 31px;
+    background-color: #001a4d !important;
+}
+
+.whiteTitle {
+    color: white;
+    text-shadow: 0 0 2px black;
+}
+
+.col-form-label{
+    padding-bottom: 0.10rem;
+    padding-right: 10px;
+    padding-left : 10px;
+    font-family: "Nunito";
+    font-weight: bold;
+}
+
+.cabecRelat {
+    border:2px solid #95a7ac;
+}
+
+.btn-cabec {
+    height: 27px;
+    width: 30px;
+    border-top-style: double;
+    padding-right: 0.5rem; 
+    padding-left:  0.4rem;
+    padding-top:    0.15rem;
+    padding-bottom: 0.15rem;
+}
+
+
+.carousel {
+    background-color: white;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    width: 5%;
+}

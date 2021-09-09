@@ -47,7 +47,7 @@ class Evento extends Model
         // Caso seja Intervalo
         if($request->data_selecao=='2'){ 
 
-            $idEvento = Evento::getId();
+          $idEvento = Evento::getId();
             $arrDatas = explode(',', trim($request->datas));
     
             if (count($arrDatas)>1){
@@ -79,7 +79,8 @@ class Evento extends Model
     
                         $dataFimEvento = ($dataControle->isSaturday() || $feriado) ? $dataControle->subDay() : $dataFinal; 
                         Evento::createEvento( $idEvento, $dataInicial, $dataFimEvento, $request);
-                        if ($dataControle==$dataFinal){ break; }
+
+                      if ($dataControle==$dataFinal){ break; }
     
     
                         $dataInicial = Carbon::parse($dataFimEvento);
