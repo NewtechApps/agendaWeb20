@@ -55,7 +55,7 @@ class AlocacaoAtuacao extends Chart
         $this->labels( $capacidade->keys() );
 
         $this->dataset( 'Disponível', 'bar', $capacidade->values() )
-            ->backgroundcolor(["#001a4d"])
+            ->backgroundcolor(["#002080"])
             ->options([
                 'borderWidth' => 1,
                 'borderColor' => 'black',

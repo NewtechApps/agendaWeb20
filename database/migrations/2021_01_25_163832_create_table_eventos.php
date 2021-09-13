@@ -15,7 +15,18 @@ class CreateTableEventos extends Migration
     {
         Schema::create('eventos', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->integer('id_evento');
+            $table->string('title');
+            $table->date('start');
+            $table->date('end');
+            $table->integer('id_usuario');
+            $table->integer('empresa');
+            $table->char('status', 1);
+            $table->integer('tipo_trabalho');
+            $table->integer('id_creator');
+            $table->char('tipo_data', 1);
+            $table->char('tipo_periodo', 1);
+            $table->softDeletes($column = 'deleted_at');
         });
     }
 

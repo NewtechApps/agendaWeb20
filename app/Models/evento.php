@@ -116,7 +116,7 @@ class Evento extends Model
                 $idEvento = Evento::getId();
                 $dataInicial = Carbon::parse(str_replace('/', '-', $arrDatas[0]));
                 $dataFinal   = Carbon::parse(str_replace('/', '-', $arrDatas[0]))->endOfDay();
-                evento::createEvento( $idEvento, $dataInicial, $dataFinal, $request );
+                Evento::createEvento( $idEvento, $dataInicial, $dataFinal, $request );
             };
 
         // Caso sejam Múltiplas

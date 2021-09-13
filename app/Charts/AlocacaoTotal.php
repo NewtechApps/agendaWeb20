@@ -29,7 +29,7 @@ class AlocacaoTotal extends Chart
 
         
         $this->dataset('Alocação', 'doughnut', [ $percAlocadas, $percDisponiveis ])
-            ->backgroundcolor(["#002b80", "#ff8000"])
+            ->backgroundcolor(["#002080", "#ff8000"])
             ->options([
                 'borderWidth' => 1,
                 'borderColor' => 'black',

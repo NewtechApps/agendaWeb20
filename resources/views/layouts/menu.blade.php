@@ -49,7 +49,7 @@
                      @break
                 @case(5)
                     <li class="nav-item active">
-                        <a class="nav-link" target="blank" href="{{ action('eventosController@dashboard') }}">{{ $rotina->nome }}</a>
+                        <a class="nav-link" target="blank" href="{{ action('EventosController@dashboard') }}">{{ $rotina->nome }}</a>
                     </li>
                     @break
                 @endswitch
