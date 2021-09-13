@@ -75,14 +75,16 @@ class GravarHistorico implements ShouldQueue
         $result = DB::table('events')->whereBetween('end', ['2019-07-01','2019-09-30 23:59:59'])->get();
         $data   = json_decode(json_encode($result), true);
         if (DB::table('eventos_historico')->insert($data)){
-            log::debug('teste 05 ok');
+            DB::table('events')->whereBetween('end', ['2019-07-01','2019-09-30 23:59:59'])->delete();
+            log::debug('Execução 2019-09-30 ok!');
         };
 
         // Movendo eventos entre 01/10/2019 e 31/12/2019.
         $result = DB::table('events')->whereBetween('end', ['2019-10-01','2019-12-31 23:59:59'])->get();
         $data   = json_decode(json_encode($result), true);
         if (DB::table('eventos_historico')->insert($data)){
-            log::debug('teste 06 ok');
+            DB::table('events')->whereBetween('end', ['2019-10-01','2019-12-31 23:59:59'])->delete();
+            log::debug('Execução 2019-12-31 ok!');
         };
 
 
@@ -92,14 +94,16 @@ class GravarHistorico implements ShouldQueue
         $result = DB::table('events')->whereBetween('end', ['2020-01-01','2020-03-31 23:59:59'])->get();
         $data   = json_decode(json_encode($result), true);
         if (DB::table('eventos_historico')->insert($data)){
-            log::debug('teste 07 ok');
+            DB::table('events')->whereBetween('end', ['2020-01-01','2020-03-31 23:59:59'])->delete();
+            log::debug('Execução 2020-03-31 ok!');
         };
 
         // Movendo eventos entre 01/04/2020 e 30/06/2020.
         $result = DB::table('events')->whereBetween('end', ['2020-04-01','2020-06-30 23:59:59'])->get();
         $data   = json_decode(json_encode($result), true);
         if (DB::table('eventos_historico')->insert($data)){
-            log::debug('teste 08 ok');
+            DB::table('events')->whereBetween('end', ['2020-04-01','2020-06-30 23:59:59'])->delete();
+            log::debug('Execução 2020-06-30 ok!');
         };
         */
     }
