@@ -33,6 +33,17 @@ class GravarHistorico implements ShouldQueue
     public function handle()
     {
 
+
+        log::debug('Execução realizada às: '.Carbon::now() );
+        $dataCorte = Carbon::now()->subYear(1);
+        log::Debug('Movendo registros de eventos anteriores a '.$dataCorte);
+
+        $result = DB::table('events')->where('end', '<=', $dataCorte)->get();
+        $data   = json_decode(json_encode($result), true);
+        if (DB::table('eventos_historico')->insert($data)){
+            DB::table('events')->where('end', '<=', $dataCorte)->delete();
+        };
+        
         /*
         ////// 2018 //////
         // Movendo eventos anteriores a 30/06/2018.
@@ -58,10 +69,10 @@ class GravarHistorico implements ShouldQueue
             DB::table('events')->whereBetween('end', ['2018-10-01','2018-12-31 23:59:59'])->delete();
             log::debug('Execução 2018-12-31 ok!');
         };
-
+        */
 
         
-        
+        /*
         ////// 2019 //////
         // Movendo eventos entre 01/01/2019 e 30/06/2019.
         $result = DB::table('events')->whereBetween('end', ['2019-01-01','2019-06-30 23:59:59'])->get();
@@ -86,9 +97,9 @@ class GravarHistorico implements ShouldQueue
             DB::table('events')->whereBetween('end', ['2019-10-01','2019-12-31 23:59:59'])->delete();
             log::debug('Execução 2019-12-31 ok!');
         };
+        
 
-
-
+        
         ////// 2020 //////
         // Movendo eventos entre 01/01/2020 e 31/03/2020.
         $result = DB::table('events')->whereBetween('end', ['2020-01-01','2020-03-31 23:59:59'])->get();
@@ -106,5 +117,6 @@ class GravarHistorico implements ShouldQueue
             log::debug('Execução 2020-06-30 ok!');
         };
         */
+
     }
 }
