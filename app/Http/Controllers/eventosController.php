@@ -283,7 +283,8 @@ class EventosController extends Controller
         $totalAlocadas = 0;
         $dataDe  = $request->dataInicial ?? Carbon::now()->startOfWeek();
         $dataAte = $request->dataFinal   ?? Carbon::now()->endOfWeek(Carbon::FRIDAY);
-        
+        $dataAte = Carbon::parse($dataAte)->endOfDay();
+
         $feriados = DB::table('feriados')
                     ->whereBetween('data', [ $dataDe, $dataAte ])->count();
 
@@ -325,7 +326,7 @@ class EventosController extends Controller
             $totalAlocadas += ($horasMultipla->sum('totalHoras') + $horasIntervalo);
         }
 
-        $diffDays   = Carbon::parse($dataDe)->diffInWeekdays( Carbon::parse($dataAte)->endOfDay()); 
+        $diffDays   = Carbon::parse($dataDe)->diffInWeekdays( $dataAte ); 
         $diffDays   = $diffDays-$feriados;
         $totalHoras = $diffDays*8*$usuarios->count();
 

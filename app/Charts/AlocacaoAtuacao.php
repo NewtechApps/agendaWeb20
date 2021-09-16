@@ -20,14 +20,14 @@ class AlocacaoAtuacao extends Chart
 
         $disponiveis = DB::table('usuario')
                         ->select('linha_produto.id_linha_produto', 
-                            'descricao',
+                            'linha_produto.descricao',
                             DB::Raw('count(*) as quantidade'), 
                             DB::Raw('count(*) as alocadas' ) )
                         ->join('linha_produto', 'usuario.id_linha_produto','=', 'linha_produto.id_linha_produto')
                         ->where('usuario.status', '=' , '0')
                         ->where('usuario.id_perfil' , '<>', '1')
                         ->where('usuario.id_usuario', '<>', '1')
-                        ->groupBy('linha_produto.id_linha_produto')
+                        ->groupBy('linha_produto.id_linha_produto', 'linha_produto.descricao')
                         ->orderBy('quantidade','desc')->get();
 
         foreach($disponiveis as $disponivel){
@@ -50,6 +50,7 @@ class AlocacaoAtuacao extends Chart
 
             /*
             log::Debug('-----------------');
+            log::Debug('Inicial: '.$dataDe.' - Final: '.$dataAte);
             log::Debug($disponivel->descricao);
             log::Debug($horasMultipla);
             */

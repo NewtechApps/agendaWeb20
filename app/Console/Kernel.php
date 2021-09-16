@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('queue:work --stop-when-empty')->everyminute();
-        $schedule->job(new GravarHistorico)->hourly();
+        $schedule->job(new GravarHistorico)->daily();
     }
 
     /**
