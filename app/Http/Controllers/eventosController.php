@@ -280,13 +280,17 @@ class EventosController extends Controller
     public function dashboard(Request $request)
     {
  
+        $diasFeriados = 0;
         $totalAlocadas = 0;
         $dataDe  = $request->dataInicial ?? Carbon::now()->startOfWeek();
         $dataAte = $request->dataFinal   ?? Carbon::now()->endOfWeek(Carbon::FRIDAY);
         $dataAte = Carbon::parse($dataAte)->endOfDay();
 
-        $feriados = DB::table('feriados')
-                    ->whereBetween('data', [ $dataDe, $dataAte ])->count();
+        $feriados = DB::table('feriados')->whereBetween('data', [ $dataDe, $dataAte ])->get();
+        foreach($feriados as $feriado){
+            $diasFeriados =+ Carbon::parse($feriado->data)->isWeekday() ?? 1;
+        }
+
 
         $usuarios = DB::table('usuario')
                     ->where('status'    , '=' , '0')
@@ -327,7 +331,7 @@ class EventosController extends Controller
         }
 
         $diffDays   = Carbon::parse($dataDe)->diffInWeekdays( $dataAte ); 
-        $diffDays   = $diffDays-$feriados;
+        $diffDays   = $diffDays-$diasFeriados;
         $totalHoras = $diffDays*8*$usuarios->count();
 
         $chartTotal   = new AlocacaoTotal( $totalHoras, $totalAlocadas );
