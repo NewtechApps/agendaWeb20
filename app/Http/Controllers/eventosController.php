@@ -288,7 +288,7 @@ class EventosController extends Controller
 
         $feriados = DB::table('feriados')->whereBetween('data', [ $dataDe, $dataAte ])->get();
         foreach($feriados as $feriado){
-            $diasFeriados =+ Carbon::parse($feriado->data)->isWeekday() ?? 1;
+            $diasFeriados += Carbon::parse($feriado->data)->isWeekday() ?? 1;
         }
 
 
