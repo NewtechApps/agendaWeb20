@@ -146,6 +146,8 @@ class usuarioController extends Controller
                         'telefone'  => $request->telefone,
                         'id_empresa'=> $request->id_empresa,
                         'id_perfil' => $request->id_perfil,
+                        'idEstado'  => $request->codEstado,
+                        'idCidade'  => $request->codMunicipio,
                         'id_linha_produto'  => $request->id_linha_produto,
                         'especialidade'     => $request->especialidade,
                         'data_nascimento'   => $request->data_nascimento,
@@ -162,14 +164,14 @@ class usuarioController extends Controller
 
                 } else {
 
-                    $idUsuario = Usuario::getId();
-                    $usuario   = new Usuario();
-                    $usuario->id_usuario = $idUsuario; 
+                    $usuario = new Usuario();
                     $usuario->nome   = $request->nome;
                     $usuario->email  = $request->email;
                     $usuario->login  = $request->login;
                     $usuario->status = $request->status;
                     $usuario->senha  = Hash::make("123456");
+                    $usuario->idEstado   = $request->codEstado;
+                    $usuario->idCidade   = $request->codMunicipio;
                     $usuario->telefone   = $request->telefone;
                     $usuario->id_empresa = $request->id_empresa;
                     $usuario->id_perfil  = $request->id_perfil;
@@ -178,7 +180,9 @@ class usuarioController extends Controller
                     $usuario->data_nascimento  = $request->data_nascimento;
                     $usuario->notificacao_agenda = $request->notificacao_agenda; 
                     $usuario->imagem = "";
+
                     $usuario->save();
+                    $idUsuario = $usuario->id_usuario;
                 }
 
 
@@ -240,7 +244,8 @@ class usuarioController extends Controller
         }
     }    
 
-    public function empresas($usuario){
+    public function empresas($usuario)
+    {
 
         return  DB::table('empresa')
                 ->select('empresa.id_empresa','empresa.razao_social','usuario_empresa.email','usuario_empresa.status')
@@ -252,7 +257,8 @@ class usuarioController extends Controller
                 ->orderBy('empresa.razao_social', 'asc')->get();
     }
 
-    public function updateUser(Request $request){
+    public function updateUser(Request $request)
+    {
 
         $validator = Validator::make( $request->all(), Usuario::$updUserRules, [], Usuario::$updUserTranslate);
         if ($validator->fails()) {

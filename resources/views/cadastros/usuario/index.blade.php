@@ -34,7 +34,6 @@
 
 
 @section('content')
-<script type='text/javascript' src="{{ asset('js/usuario.js') }}"></script>
 <div id="main" class="container-fluid pt-2 pb-4">
     <div id="list" class="row border border-dark rounded pb-1" style='background: white'>
         <div class="table-responsive col-md-12">
@@ -69,7 +68,6 @@
                             <a class='fas fa-edit'    title="Alterar" href="#" onclick="updateUsuario( {{ json_encode($usuario) }});"></a>
                             <form class='form-inline' style='display: inline-grid' id="frm_del_usuario_{{ $usuario->id_usuario }}" action="{{ url('usuario/delete') }}" method="post">
                             {{ csrf_field() }}
-                            {{ method_field('DELETE') }}
                             <input name="id_usuario" id="id_usuario" value="{{ $usuario->id_usuario }}" type="hidden"></input>                
                             <a class='fas fa-eraser' title="Deletar" href="#delete" data-toggle="modal" data-codigo   ="{{ $usuario->id_usuario }}"
                                                                                                         data-descricao="{{ $usuario->nome }}"></a>
@@ -85,5 +83,19 @@
 </div> 
 
 @include('layouts.footer')
-@include('cadastros.usuario.update')
+@include('cadastros.usuario.crud')
+
+<script type='text/javascript'>
+    
+    $('#telefone').mask('(00) 00000-0000');
+    $('#crudModal').on('shown.bs.modal', function(e) { $('#crudModal #nome').focus(); });    
+
+    $('#delete').on('show.bs.modal', function(e) {
+        var codigo   = $(e.relatedTarget).data("codigo");
+        var descricao= $(e.relatedTarget).data("descricao");
+
+        $('#delete').find("#description").html('Usuário: '+codigo+' - '+descricao);
+        $('#delete').find("#delete-btn").attr('onclick',"javascript: $('#frm_del_usuario_"+codigo+"').submit()");
+    });   
+</script>
 @endsection

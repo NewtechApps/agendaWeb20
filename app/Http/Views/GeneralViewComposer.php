@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Client;
+use GuzzleHttp\psr7;
 
 class GeneralViewComposer
 {
@@ -73,6 +76,24 @@ class GeneralViewComposer
     {
         $feriados = DB::table('feriados')->get();
         return $view->with('feriados', $feriados);
+    }
+
+
+
+
+    public function estados($view)
+    {
+        try {
+
+            $client = new Client(['base_uri' => 'https://servicodados.ibge.gov.br/']);
+            $link   = 'api/v1/localidades/estados/';
+            $result = $client->request('get', $link)->getBody();
+            $estados = collect(json_decode($result, true));
+            return $view->with('estados', $estados->sortBy('nome'));
+
+        } catch (\Exception $e) {
+            log::Debug('ERRO: '.$e);
+        }
     }
 
 }

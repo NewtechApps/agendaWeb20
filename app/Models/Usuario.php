@@ -16,16 +16,14 @@ class Usuario extends Authenticatable
     protected $rememberTokenName = false;
 
     public $timestamps = false;
-    public $autoincrement = false;
+    public $autoincrement = true;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = [
-        'id_usuario', 'login', 'email', 'senha', 'nome',
-    ];
+    protected $fillable = ['login', 'email', 'senha', 'nome'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -41,13 +39,6 @@ class Usuario extends Authenticatable
         return $this->senha;
     }
     
-    public static function getId(){
-        return (DB::table('usuario')
-                ->orderBy('id_usuario', 'desc')->value('id_usuario'))+1;
-
-    }
-
-
     public static $translate = [
         'nome'      => 'Nome',
         'login'     => 'Login',

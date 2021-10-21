@@ -55,3 +55,40 @@ window.gravarRegistro = function (form){
         }
     });
 }
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////         Funções de Manipulações de Dados para Controller         /////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+window.buscarCidades = function(fieldEstado, fieldCidade, idCidade) {
+    
+    $(fieldCidade).empty();
+    $(fieldCidade).append("<option value=''>Selecione a Cidade</option>"); 
+
+    if($(fieldEstado).val()){
+        $.ajax({
+        url: 'https://servicodados.ibge.gov.br/api/v1/localidades/estados/'+$(fieldEstado).val()+'/municipios?orderBy=nome',
+        type: 'get',
+        dataType: 'json',
+        success: function(response){
+
+            for(var i=0; i<response.length; i++){
+                var id   = response[i].id.toString();
+                var name = response[i].nome;
+                var sel  = "";
+
+                if(idCidade){
+                    if(idCidade.toString().trim()==id.trim()){
+                        sel = " selected";
+                    };
+                };
+
+                $(fieldCidade).append("<option value="+id+sel+">"+name+"</option>"); 
+            }
+        }
+        });
+    };
+};
+

@@ -14,12 +14,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Auth::routes();
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home'        , 'HomeController@index')->name('home');
+
 
 Route::get('/', function () { return view('auth.login'); });
 Route::get('/update-user', function() { return view('auth.update'); });
 Route::get('/mailMessage', function (){ return view('auth.mailMessage'); });
-
 
 
 // Rotas de Cadastros - Perfil do Usuario
@@ -34,7 +34,7 @@ Route::group(['prefix' => 'perfilUsuario'], function () {
 Route::group(['prefix' => 'usuario'], function () {
     Route::get('/'            , 'usuarioController@index');
     Route::post('store'       , 'usuarioController@store');
-    Route::delete('delete'    , 'usuarioController@delete');
+    Route::post('delete'      , 'usuarioController@delete');
     Route::post('updateUser'  , 'usuarioController@updateUser');
     Route::get('empresas/{id}', 'usuarioController@empresas');
 });
