@@ -1,0 +1,65 @@
+version: "3"
+services:
+  db:
+    hostname: ma0-tdi-mariadb
+    image: mariadb
+    container_name: ma0-tdi-mariadb
+    networks:
+      - backend
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_520_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: newtech
+      MYSQL_DATABASE: agenda_desenv
+      MYSQL_USER: toor
+      MYSQL_PASSWORD: newtech
+    volumes:
+      - data-volume:/var/lib/mysql
+      - ./.docker/mariadb/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - 7001:3306
+
+  web:
+    platform: linux/amd64
+    hostname: ma0-tdi-php-apache
+    build:
+      context: .
+      dockerfile: ./.docker/php/Dockerfile
+    image: ma0-tdi-php-apache:1.0
+    container_name: ma0-tdi-php-apache
+    networks:
+      - backend
+      - frontend
+    depends_on:
+      - db
+    volumes:
+      - ./.docker/php/vhost.conf:/etc/apache2/sites-available/000-default.conf
+      - ./.docker/php/timezone.ini:/usr/local/etc/php/conf.d/timezone.ini
+      - ./.docker/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+        #- ./src:/var/www/html
+    ports:
+      - 7000:80
+
+  phpmyadmin:
+    hostname: ma0-tdi-phpmyadmin
+    container_name: ma0-tdi-phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    environment:
+      MYSQL_ROOT_PASSWORD: newtech
+      MYSQL_USER: toor
+      MYSQL_PASSWORD: newtech
+    networks:
+      - backend
+      - frontend
+    links:
+      - db:db
+    depends_on:
+      - db
+    ports:
+      - 7002:80
+
+volumes:
+  data-volume:
+
+networks:
+  backend:
+  frontend:
