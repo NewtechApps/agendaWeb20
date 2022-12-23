@@ -427,8 +427,9 @@
 
                         },
 
-                        error: function() {
-                            window.location.href = '/';
+                        error: function(msg) {
+                            console.error(msg);
+                            //window.location.href = '/';
                         },
                     });
 
