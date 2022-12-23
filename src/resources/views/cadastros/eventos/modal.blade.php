@@ -115,7 +115,7 @@
                 <span colspan='10' id='erros' style="color: red; font-weight: bold; padding-right: 2rem;"></span>
                 <button type="button" class="btn btn-sm btn-dark"      id="del-all-btn"  href="#delAll" data-toggle="modal">Excluir Todos</button>
                 <button type="button" class="btn btn-sm btn-danger"    id="delete-btn"   href="#delete" data-toggle="modal">Excluir</button>
-                <button type="button" class="btn btn-sm btn-secondary" id="cancel-btn"   data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-sm btn-secondary" id="cancel-btn"   onClick="fecharAgenda();" data-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn btn-sm btn-success"   id="confirm-btn"  onClick="gravarAgenda('#frmAgenda');">Salvar</button>
             </div>
         </div>

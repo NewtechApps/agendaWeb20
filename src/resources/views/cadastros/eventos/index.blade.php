@@ -594,6 +594,10 @@
         });
     }
 
+    function fecharAgenda() {
+        $('#modalAgenda').modal('hide');
+    }
+
     function filtrarUsuarios() {
 
         $texto = $('#usuarios').val().toLowerCase();
