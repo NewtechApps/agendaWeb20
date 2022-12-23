@@ -12419,3 +12419,10 @@ a.text-dark:focus {
   }
 }
 
+.fa {
+    font-family: "FontAwesome","Nunito" !important;
+}
+
+select {
+    font-family: 'FontAwesome', 'Nunito'
+  }

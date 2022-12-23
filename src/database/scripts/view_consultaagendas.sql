@@ -1,10 +1,10 @@
-CREATE 
+CREATE
 VIEW `consultaagendas` AS
-    SELECT 
+    SELECT
         `agenda`.`id` AS `id`,
         `agenda`.`id_evento` AS `id_geral`,
         `agenda`.`title` AS `descricao`,
-        
+
         (CASE
             WHEN
                 (`agenda`.`status` = '0')
@@ -17,7 +17,7 @@ VIEW `consultaagendas` AS
                     ' - ',
                     `agenda`.`title`)
         END) AS `title`,
-        
+
         (CASE
             WHEN (`agenda`.`status` = '0') THEN 'red'
             ELSE CONCAT('#', `agenda_desenv`.`trabalho`.`cor`)
@@ -26,10 +26,10 @@ VIEW `consultaagendas` AS
             WHEN (`agenda`.`status` = '0') THEN 'red'
             ELSE CONCAT('#', `agenda_desenv`.`trabalho`.`cor`)
         END) AS `borderColor`,
-        
+
         `linha_produto`.`id_linha_produto` AS `linhaAtuacao`,
         `linha_produto`.`descricao`        AS `descAtuacao`,
-        
+
         `usuario`.`nome` AS `nome`,
         `usuario`.`id_usuario` AS `usuario`,
         `agenda`.`empresa` AS `empresa`,
@@ -40,14 +40,15 @@ VIEW `consultaagendas` AS
         `agenda`.`tipo_data` AS `tipo_data`,
         `agenda`.`tipo_periodo` AS `tipo_periodo`,
         `agenda`.`tipo_trabalho` AS `tipo_trabalho`,
+        `agenda`.`tipo_alocacao` AS `tipo_alocacao`,
         `trabalho`.`descricao` AS `descTrabalho`,
-        
+
         (CASE
             WHEN (`agenda`.`tipo_periodo` = '2') THEN 'Extra'
             WHEN (`agenda`.`tipo_periodo` = '1') THEN 'Part-Time'
             ELSE 'Integral'
         END) AS `periodo`,
-        
+
         (SELECT   `usuario`.`nome`
             FROM  `usuario`
             WHERE `usuario`.`id_usuario` = `agenda`.`id_creator`) AS `nomeGestor`

@@ -1,13 +1,20 @@
 
 .fc .fc-toolbar.fc-header-toolbar {
 	margin-bottom: 1em;
-}   
+}
 
 .fc-event-title {
 	font-size: 0.85rem;
 	padding: 0px;
+    font-family: "FontAwesome", "Nunito" !important;
+    font-weight: 900;
 }
 
 .ui-datepicker {
 	width: auto;
+}
+
+.icon-agenda {
+    margin:0.2rem;
+    margin-top:0.35rem;
 }

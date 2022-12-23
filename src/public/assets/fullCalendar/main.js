@@ -6822,7 +6822,7 @@ var FullCalendar = (function (exports) {
         var endMarker = framingRange.end;
         var instanceStarts = [];
         while (dayMarker < endMarker) {
-            var instanceStart 
+            var instanceStart
             // if everyday, or this particular day-of-week
             = void 0;
             // if everyday, or this particular day-of-week
@@ -9020,11 +9020,18 @@ var FullCalendar = (function (exports) {
         return StandardEvent;
     }(BaseComponent));
     function renderInnerContent(innerProps) {
+        console.dir(innerProps);
         return (createElement("div", { className: 'fc-event-main-frame' },
             innerProps.timeText &&
                 createElement("div", { className: 'fc-event-time' }, innerProps.timeText),
             createElement("div", { className: 'fc-event-title-container' },
-                createElement("div", { className: 'fc-event-title fc-sticky' }, innerProps.event.title || createElement(Fragment, null, "\u00A0")))));
+
+             createElement("span",
+                { className: 'fa fa-solid icon-agenda' }, innerProps.event.extendedProps.tipo_periodo == 0 ? createElement(Fragment, null, "\uf111") : innerProps.event.extendedProps.tipo_periodo == 2 ? createElement(Fragment, null, "\uf06a") : createElement(Fragment, null, "\uf042")
+             ),
+                createElement("div", { className: 'fc-event-title fc-sticky' }, innerProps.event.title || createElement(Fragment, null, "\u00A0")),
+
+                )));
     }
     function getSegAnchorAttrs(seg) {
         var url = seg.eventRange.def.url;

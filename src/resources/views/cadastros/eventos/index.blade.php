@@ -1,7 +1,7 @@
 @extends('layouts.layoutPadrao')
 @section('content')
 <script src="{{ asset('assets/fullCalendar/main.js') }}"></script>
-<link  href="{{ asset('assets/fullCalendar/main.css') }}" rel="stylesheet">
+<!--link  href="{{ asset('assets/fullCalendar/main.css') }}" rel="stylesheet"-->
 <link  href="{{ asset('css/customCalendar.css') }}" rel="stylesheet">
 
 <script src="{{ asset('assets/datepicker.js') }}"></script>
@@ -385,6 +385,7 @@
                     $('#modalAgenda #id_usuario').val( info.event.extendedProps.usuario );
                     $('#modalAgenda #tipo_periodo').val( info.event.extendedProps.tipo_periodo);
                     $('#modalAgenda #tipo_trabalho').val( info.event.extendedProps.tipo_trabalho );
+                    $('#modalAgenda #tipo_alocacao').val( info.event.extendedProps.tipo_alocacao );
 
                     $('#modalAgenda #delete-btn').css('display', info.event.extendedProps.tipo_data=='2' ? 'inline-block':'none');
                     $radio = (info.event.extendedProps.tipo_data=='1') ? '#modalAgenda #radio2' : '#modalAgenda #radio1';
