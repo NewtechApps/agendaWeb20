@@ -14,9 +14,9 @@ use DateTime;
 use Session;
 use Validator;
 
-use App\Models\Evento;    
+use App\Models\Evento;
 use App\Models\Usuario;
-use App\Models\calendar;    
+use App\Models\calendar;
 
 use App\Events\AgendaCriada;
 use App\Events\AgendaExcluida;
@@ -53,20 +53,20 @@ class EventosController extends Controller
         $validator = Validator::make( $request->all(), Evento::$rules, [], Evento::$translate);
         if ($validator->fails()) {
         return response()->json(['code'=>'401', 'erros'=>$validator->messages()]);
-        } else {  
+        } else {
 
             try {
 
                 // Caso seja alteração de Registro.
                 if($request->id_geral){
-                    
+
                     // Caso evento original seja Múltiplas datas.
                     $evento = Evento::where('id_evento', '=', $request->id_geral)->first();
                     if($evento->tipo_data=='1'){
 
                         Evento::where('id_evento', '=', $request->id_geral)->delete();
                         Evento::gerarAgendas($request);
-                    
+
                     // Caso evento original seja de Intervalo.
                     } else {
                         Evento::where('id', '=', $request->id_evento)->delete();
@@ -84,12 +84,12 @@ class EventosController extends Controller
                 if($request->status=="1"){
                     $user = Usuario::find($request->id_usuario);
                     if($user->notificacao_agenda=="S"){
-        
+
                         $empresa = DB::table('usuario_empresa')
                                     ->where('id_usuario', '=', $request->id_usuario)
                                     ->where('id_empresa', '=', $request->empresa)
                                     ->first();
-        
+
                         if($empresa->status==0){
                             $user->email = $empresa->email;
                             $user->notify( new AgendaInsert($request->all()) );
@@ -104,7 +104,7 @@ class EventosController extends Controller
             }
         }
     }
-  
+
 
 
     public function delete(Request $request)
@@ -119,20 +119,20 @@ class EventosController extends Controller
             if($event->status=="1"){
                 $user = Usuario::find($event->id_usuario);
                 if($user->notificacao_agenda=="S"){
-    
+
                     $empresa = DB::table('usuario_empresa')
                             ->where([
                                 ['id_usuario', '=', $event->id_usuario],
                                 ['id_empresa', '=', $event->empresa],
                             ])->first();
-    
+
                     if($empresa->status==0){
                         $user->email = $empresa->email;
                         $user->notify( new AgendaDelete( $event ));
                     }
                 }
             }
-    
+
             Evento::where('id', '=', $request->id_evento)->delete();
             return response()->json(['code'=>'200']);
 
@@ -140,8 +140,8 @@ class EventosController extends Controller
             log::Debug('ERRO: '.$e);
             return response()->json(['code'=>'401', 'erros'=>array(Config::get('app.messageError'))] );
         }
-    }    
- 
+    }
+
     public function deleteAll(Request $request)
     {
 
@@ -157,20 +157,20 @@ class EventosController extends Controller
             if($event->status=="1"){
                 $user = Usuario::find($event->id_usuario);
                 if($user->notificacao_agenda=="S"){
-    
+
                     $empresa = DB::table('usuario_empresa')
                             ->where([
                                 ['id_usuario', '=', $event->id_usuario],
                                 ['id_empresa', '=', $event->empresa],
                             ])->first();
-    
+
                     if($empresa->status==0){
                         $user->email = $empresa->email;
                         $user->notify( new AgendaDelete( $event ));
                     }
                 }
             }
-        
+
             Evento::where([
                     ['id_evento', '=', $request->id_geral],
                     ['start', '>', now()]
@@ -181,21 +181,21 @@ class EventosController extends Controller
             log::Debug('ERRO: '.$e);
             return response()->json(['code'=>'401', 'erros'=>array(Config::get('app.messageError'))] );
         }
-    }    
+    }
 
-    
+
     public function consulta(Request $request)
     {
 
         if(Auth::user()->id_perfil=='1') {
-            
+
             $search = $request->filterTitle;
             $status = $request->filterStatus;
             $usuario  = $request->filterUsuario;
             $empresa  = $request->filterEmpresa;
             $trabalho = $request->filterTrabalho;
 
-            $events = DB::table('consultaagendas')
+            $events = DB::table('consultaAgendas')
                         ->whereBetween('start', [ $request->start, $request->end ])
                         ->where(function ($query) use ($search) {
                            $query->where('nome', 'like' , '%' . $search . '%')
@@ -211,7 +211,7 @@ class EventosController extends Controller
         } else {
 
             $usuario = Auth::user()->id_usuario;
-            $events  = DB::table('consultaagendas')
+            $events  = DB::table('consultaAgendas')
                         ->join('usuario_empresa', function($join) use ($usuario) {
                             $join->on('usuario_empresa.id_empresa', '=', 'empresa')
                                 ->where([
@@ -220,7 +220,7 @@ class EventosController extends Controller
                                 ]);
                             }
                         )
-        
+
                         ->where('usuario', '=', Auth::user()->id_usuario)
                         ->whereBetween('start', [ $request->start, $request->end ])
                         ->get();
@@ -233,6 +233,8 @@ class EventosController extends Controller
     public function relatorio(Request $request)
     {
 
+        //DB::enableQueryLog();
+
         $status   = $request->filterStatus;
         $empresa  = $request->checkEmpresas ?? '';
         $usuario  = $request->checkUsuarios ?? '';
@@ -244,10 +246,10 @@ class EventosController extends Controller
 
             if(!DB::table('calendar')->where('id_data', '=', $d->format('Y-m-d') )->first()){
                 $calendar = new calendar();
-                $calendar->id_data = $d->format('Y-m-d');            
+                $calendar->id_data = $d->format('Y-m-d');
                 $calendar->save();
             };
-        }                    
+        }
 
 
         $dates = DB::table('calendar')
@@ -264,13 +266,15 @@ class EventosController extends Controller
                     ->groupBy('LINHA')->groupBy('USUARIO')->groupBy('NOME')
                     ->orderBy('LINHA')->orderBy('NOME')
                     ->get();
-    
+
         $eventos =  DB::table('relatorioAgendas')
                     ->whereBetween('DATACAL', [ Carbon::parse($request->data_rel_ini), Carbon::parse($request->data_rel_fin) ])
                     ->where(function ($query) use ($usuario) { if ($usuario) { $query->whereIn('USUARIO', $usuario  ); } })
                     ->orderBy('LINHA')->orderBy('NOME')->orderBy('DATACAL')
                     ->get();
-                
+
+                    //dd(DB::getQueryLog());
+
         return view("cadastros.eventos.relatorio")
                ->with('dates'   , $dates)
                ->with('eventos' , $eventos)
@@ -279,7 +283,7 @@ class EventosController extends Controller
 
     public function dashboard(Request $request)
     {
- 
+
         $diasFeriados = 0;
         $totalAlocadas = 0;
         $dataDe  = $request->dataInicial ?? Carbon::now()->startOfWeek();
@@ -301,7 +305,7 @@ class EventosController extends Controller
         foreach($usuarios as $usuario){
 
             $horasMultipla = DB::table('events')
-                                ->select('id_usuario', 'tipo_periodo', 
+                                ->select('id_usuario', 'tipo_periodo',
                                     DB::Raw('(CASE WHEN tipo_periodo=0 THEN count(*)*8 ELSE count(*)*4 END) as totalHoras') )
                                 ->whereBetween('start', [ $dataDe, $dataAte ])
                                 ->where('id_usuario'  , '=', $usuario->id_usuario)
@@ -310,7 +314,7 @@ class EventosController extends Controller
                                 ->whereNull('deleted_at')
                                 ->groupBy('id_usuario', 'tipo_periodo')
                                 ->get();
-            
+
             $eventosIntervalo = DB::table('events')
                                 ->where('start', '>=', $dataDe)
                                 ->where('end',   '<=', $dataAte)
@@ -319,10 +323,10 @@ class EventosController extends Controller
                                 ->where('tipo_data'  , '=', '2')
                                 ->whereNull('deleted_at')
                                 ->get();
-            
+
             $horasIntervalo = 0;
             foreach($eventosIntervalo as $intervalo){
-                
+
                 $eventDays = Carbon::parse( $intervalo->start )->diffInWeekdays( Carbon::parse($intervalo->end)->endOfDay() );
                 $horasIntervalo += ( $eventDays * ($intervalo->tipo_periodo=='0' ? 8 : 4 ));
             }
@@ -330,7 +334,7 @@ class EventosController extends Controller
             $totalAlocadas += ($horasMultipla->sum('totalHoras') + $horasIntervalo);
         }
 
-        $diffDays   = Carbon::parse($dataDe)->diffInWeekdays( $dataAte ); 
+        $diffDays   = Carbon::parse($dataDe)->diffInWeekdays( $dataAte );
         $diffDays   = $diffDays-$diasFeriados;
         $totalHoras = $diffDays*8*$usuarios->count();
 
