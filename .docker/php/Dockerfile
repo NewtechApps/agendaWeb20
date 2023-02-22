@@ -30,6 +30,7 @@ RUN pecl install xdebug && docker-php-ext-enable xdebug
 
 USER www-data
 
+COPY --chown=www-data:www-data ./.docker/php/php.ini /usr/local/etc/php/conf.d/custom.php.ini
 COPY --chown=www-data:www-data ./src /var/www/html
 WORKDIR /var/www/html
 
