@@ -459,6 +459,7 @@
                 $(info.el).tooltip({
                     title: info.event.title+
                     '\n\n Período: '+info.event.extendedProps.periodo+
+                    '\n Alocação: '+info.event.extendedProps.alocacao+
                     '\n Data Inicial: '+dataInicial+
                     '\n Data Final: '+dataFinal+
                     '\n\n Tipo: '+info.event.extendedProps.descTrabalho+
