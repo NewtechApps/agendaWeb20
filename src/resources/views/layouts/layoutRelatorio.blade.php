@@ -3,13 +3,16 @@
     <head>
 
         <meta charset="UTF-8">
-        <title>{{ config('app.name') }}</title> 
+        <title>{{ config('app.name') }}</title>
 
         <link rel='icon' href="{{ asset('images/favicon.png') }}">
-        <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.6.3/css/all.css' 
-            integrity='sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/' 
-            crossorigin='anonymous'>
-        
+        <!--link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.6.3/css/all.css'
+            integrity='sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/'
+            crossorigin='anonymous'-->
+            <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
+
+        <!--link rel="stylesheet" href="{{ asset('css/all.css') }}"-->
+
         <link rel="stylesheet" href="{{ asset('css/app.css') }}">
         <link rel="stylesheet" href="{{ asset('css/padrao.css') }}">
         <script src="{{ asset('js/app.js') }}"></script>
@@ -25,7 +28,7 @@
                 background-attachment: fixed;
             }
 
-        </style>   
+        </style>
     </head>
 
     <body>
